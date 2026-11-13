@@ -148,3 +148,5 @@ code{background:var(--accent-soft);border-radius:4px;padding:0 4px}
   h1{font-size:22px}
 }
 .muted.small,.small{font-size:13px}
+input.num{max-width:140px}
+.opt-item.dbg,.opt-item.dbg:has(input:checked){background:var(--dbg);color:#222}

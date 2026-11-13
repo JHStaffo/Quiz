@@ -14,6 +14,8 @@ A private, self-hosted questionnaire for couples. Each partner answers on their 
 
 Open `/admin` to log in.
 
+**Upgrading an existing install?** Back up first, then import in order whichever of these you have not run yet: `upgrade-workbook-questions.sql` (main questions), then `upgrade-private-info-intro.sql` (intro questions). Each one replaces only its own section's questions and answers.
+
 **Already installed the first version?** Don't re-import `install.sql` (it wipes everything). Back up the database, then import `upgrade-workbook-questions.sql`. It adds the her-view wording column and replaces the main questions with the workbook set. This deletes existing main-quiz answers but keeps the intro questions and answers.
 
 ## Pages
@@ -21,7 +23,7 @@ Open `/admin` to log in.
 | URL | What it does |
 | --- | --- |
 | `/` | Landing: start a new quiz or paste a link |
-| `/start` | Person A picks man/woman, their name and what they call their partner |
+| `/start` | Person A picks partner orientation, their name and what they call their partner |
 | `/join/{token}` | Private intro questions (Person B starts here from the shared link; Person A continues here after `/start`) |
 | `/share/{token}` | Person A gets the partner link and their own private link |
 | `/quiz/{token}` | Main questionnaire, works out who is A or B from the token |
@@ -44,7 +46,7 @@ An item appears in results only when both partners answered 2 or higher, labelle
 
 ## Questions
 
-The main quiz ships with the 368 questions from the couples quiz workbook, in 13 categories, ordered by the workbook's ID numbers. Everything is editable in `/admin > Questions`: categories (intro or main), order, question text, her-view wording, type, options, required, and active/hidden.
+The intro ships with the 44 private questions from the workbook's Private Info tab (what you do now, what you did with past partners and wish you did, what you have tried together, and individual history, permission and honesty). The main quiz ships with the 368 questions from the couples quiz workbook, in 13 categories, ordered by the workbook's ID numbers. Everything is editable in `/admin > Questions`: categories (intro or main), order, question text, her-view wording, type, options, required, and active/hidden.
 
 Each question has a main wording (his view) and an optional **her-view wording**. The woman sees the her-view wording when one is set, so a single question can read "Receive a massage from $femalepartner" for him and "Give $malepartner a massage" for her. Both partners' answers are matched on the same question, and each person's results page uses their own wording. Placeholders in question text and options:
 

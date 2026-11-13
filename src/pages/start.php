@@ -30,10 +30,10 @@ $body = '<form method="post" class="card">' . csrf_field() . '
 <h1>Let\'s get started</h1>
 <p>First, a few details so the questions read naturally. Your partner will get their own private link next.</p>
 ' . ($err ? '<div class="error">' . e($err) . '</div>' : '') . '
-<div class="q"><div class="q-text">I am...</div>
-  <div class="opts two">
-    <label class="opt-item"><input type="radio" name="gender" value="male" required' . ($g === 'male' ? ' checked' : '') . '> <span>The man</span></label>
-    <label class="opt-item"><input type="radio" name="gender" value="female"' . ($g === 'female' ? ' checked' : '') . '> <span>The woman</span></label>
+<div class="q"><div class="q-text">Partner orientation</div>
+  <div class="opts">
+    <label class="opt-item"><input type="radio" name="gender" value="male" required' . ($g === 'male' ? ' checked' : '') . '> <span>I am a male and my partner is a female</span></label>
+    <label class="opt-item"><input type="radio" name="gender" value="female"' . ($g === 'female' ? ' checked' : '') . '> <span>I am a female and my partner is a male</span></label>
   </div></div>
 <div class="q"><div class="q-text">What should the quiz call you?</div>
   <input type="text" name="self_name" maxlength="100" required value="' . e($_POST['self_name'] ?? '') . '" placeholder="Your name or nickname"></div>

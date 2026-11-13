@@ -156,6 +156,7 @@ const QTYPES = [
     'multi'    => 'Pick any options (checkboxes)',
     'text'     => 'Short text',
     'textarea' => 'Long text',
+    'number'   => 'Number (0-9999)',
 ];
 
 // --- Quiz sessions / participants -----------------------------------------
@@ -285,6 +286,9 @@ function save_answer(int $participantId, array $question, array $data): void
         $opts = question_options($question);
         $picked = array_values(array_filter($v, fn($x) => in_array($x, $opts, true)));
         $valueText = $picked ? json_encode($picked, JSON_UNESCAPED_UNICODE) : null;
+    } elseif ($type === 'number') {
+        $v = trim((string)($data['v'] ?? ''));
+        $valueText = ($v !== '' && ctype_digit($v) && strlen($v) <= 4) ? (string)(int)$v : null;
     } else {
         $v = trim((string)($data['v'] ?? ''));
         $valueText = $v !== '' ? mb_substr($v, 0, 5000) : null;
@@ -399,7 +403,7 @@ function render_page(string $title, string $body, array $opts = []): void
         . '<meta name="robots" content="noindex, nofollow">'
         . '<meta name="referrer" content="no-referrer">'
         . '<title>' . e($title) . ' · ' . e($site) . '</title>'
-        . '<link rel="stylesheet" href="' . e(url('assets/style.css')) . '?v=3">'
+        . '<link rel="stylesheet" href="' . e(url('assets/style.css')) . '?v=4">'
         . '</head><body class="' . e($opts['body_class'] ?? '') . '">'
         . '<header class="top"><a class="brand" href="' . e(url('')) . '">♥ ' . e($site) . '</a>' . $nav . '</header>'
         . '<main class="wrap">'
@@ -465,7 +469,9 @@ function render_question(array $qq, ?array $ans, array $names, bool $debug = fal
         $dbgText = ($debug && $partnerAns && $partnerAns['value_text'] !== null)
             ? '<div class="dbg-text" title="Partner\'s answer">' . e($partnerAns['value_text']) . '</div>' : '';
         $h .= '<div class="text-row">' . $dbgText;
-        if ($type === 'textarea') {
+        if ($type === 'number') {
+            $h .= '<input type="number" inputmode="numeric" min="0" max="9999" step="1" class="num" name="' . $base . '[v]" value="' . e($cur) . '">';
+        } elseif ($type === 'textarea') {
             $h .= '<textarea name="' . $base . '[v]" rows="3" maxlength="5000">' . e($cur) . '</textarea>';
         } else {
             $h .= '<input type="text" name="' . $base . '[v]" value="' . e($cur) . '" maxlength="500">';
