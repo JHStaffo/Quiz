@@ -1,0 +1,30 @@
+# Couples Quiz - Apache rewrites (cPanel)
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # If installed in a subfolder (e.g. https://example.com/quiz/), set RewriteBase /quiz/
+    RewriteBase /
+
+    # Block direct access to app internals
+    RewriteRule ^(src|config\.php|install\.sql|README\.md)(/|$) - [F,L,NC]
+
+    # Serve real files (assets, robots.txt) directly
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Everything else goes to the front controller
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set X-Robots-Tag "noindex, nofollow"
+    Header always set Referrer-Policy "no-referrer"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+</IfModule>
+
+<FilesMatch "\.(sql|md|log)$">
+    Require all denied
+</FilesMatch>
