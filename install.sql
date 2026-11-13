@@ -32,7 +32,7 @@ CREATE TABLE questions (
   id          INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
   category_id INT UNSIGNED NOT NULL,
   section     ENUM('intro','main') NOT NULL,
-  qtype       ENUM('scale','single','multi','text','textarea') NOT NULL DEFAULT 'scale',
+  qtype       ENUM('scale','single','multi','text','textarea','number') NOT NULL DEFAULT 'scale',
   text        VARCHAR(1000) NOT NULL,
   text_female VARCHAR(1000) NULL,
   help        VARCHAR(1000) NULL,
@@ -92,85 +92,173 @@ INSERT INTO settings (name, value) VALUES
   ('max_questions_per_page', '15'),
   ('max_categories_per_page', '2');
 
--- Starter questions (edit everything from /admin)
-INSERT INTO categories (id, section, name, description, sort_order) VALUES (1, 'intro', 'About you', 'A few private questions about you. Your partner never sees these answers.', 10);
+-- Intro (private) questions from the Private Info tab
+INSERT INTO categories (id, section, name, description, sort_order) VALUES (1, 'intro', 'Currently we engage in', 'Activities you and $partner do now. Never shown to $partner.', 10);
 INSERT INTO questions (category_id, section, qtype, text, text_female, help, options, required, active, sort_order) VALUES
-  (1, 'intro', 'single', 'How would you describe your sexual orientation?', NULL, NULL, 'Straight
-Mostly straight
-Bisexual
-Mostly gay or lesbian
-Prefer not to say', 1, 1, 10),
-  (1, 'intro', 'single', 'How would you describe your sex drive?', NULL, NULL, 'Low
-Medium
-High
-Very high', 1, 1, 20),
-  (1, 'intro', 'single', 'How satisfied are you with your sex life with $partner right now?', NULL, NULL, 'Very unsatisfied
-Somewhat unsatisfied
-Neutral
-Satisfied
-Very satisfied', 1, 1, 30),
-  (1, 'intro', 'single', 'Ideally, how often would you like to have sex?', NULL, NULL, 'Less than once a month
-A few times a month
-About once a week
-A few times a week
-Daily or more', 1, 1, 40);
-INSERT INTO categories (id, section, name, description, sort_order) VALUES (2, 'intro', 'What we do now', 'About your sex life together today.', 20);
+  (1, 'intro', 'multi', 'Which of these do you and $partner currently engage in?', NULL, 'Tick all that apply.', 'Oral
+Vaginal
+Anal
+69
+Threesomes
+Group sex
+Make porn for ourselves
+Make porn for others
+Swinging
+Being watched / exhibitionism
+Roleplay
+Toys during sex
+BDSM / light bondage
+Pegging
+Same-sex play (with others)
+Cuckolding / hotwife style', 0, 1, 10);
+INSERT INTO categories (id, section, name, description, sort_order) VALUES (2, 'intro', 'With past partners, and I wish we did', 'Things you did with past partners that you and $partner don''t do now, but you wish you did. Never shown to $partner.', 20);
 INSERT INTO questions (category_id, section, qtype, text, text_female, help, options, required, active, sort_order) VALUES
-  (2, 'intro', 'single', 'How often do $malepartner and $femalepartner have sex at the moment?', NULL, NULL, 'Rarely or never
-About once a month
-A few times a month
-About once a week
-A few times a week
-Daily or more', 1, 1, 10),
-  (2, 'intro', 'multi', 'Which of these do $malepartner and $femalepartner currently do together?', NULL, 'Tick all that apply.', 'Kissing and making out
-Massage
-Oral sex
-Intercourse
-Using toys
-Watching porn together
-Sexting or sending photos
-Light kink (spanking, blindfolds and so on)
-Roleplay', 0, 1, 20);
-INSERT INTO categories (id, section, name, description, sort_order) VALUES (3, 'intro', 'What we used to do', 'Things from earlier in your relationship.', 30);
+  (2, 'intro', 'single', 'Oral', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 10),
+  (2, 'intro', 'single', 'Vaginal', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 20),
+  (2, 'intro', 'single', 'Anal', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 30),
+  (2, 'intro', 'single', '69', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 40),
+  (2, 'intro', 'single', 'Threesomes', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 50),
+  (2, 'intro', 'single', 'Group sex', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 60),
+  (2, 'intro', 'single', 'Make porn for ourselves', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 70),
+  (2, 'intro', 'single', 'Make porn for others', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 80),
+  (2, 'intro', 'single', 'Swinging', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 90),
+  (2, 'intro', 'single', 'Being watched / exhibitionism', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 100),
+  (2, 'intro', 'single', 'Roleplay', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 110),
+  (2, 'intro', 'single', 'Toys during sex', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 120),
+  (2, 'intro', 'single', 'BDSM / light bondage', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 130),
+  (2, 'intro', 'single', 'Pegging', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 140),
+  (2, 'intro', 'single', 'Same-sex play (with others)', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 150),
+  (2, 'intro', 'single', 'Cuckolding / hotwife style', NULL, NULL, 'Yes
+No
+Maybe', 1, 1, 160);
+INSERT INTO categories (id, section, name, description, sort_order) VALUES (3, 'intro', 'In the past we have tried', 'Things you and $partner have tried together at some point. Never shown to $partner.', 30);
 INSERT INTO questions (category_id, section, qtype, text, text_female, help, options, required, active, sort_order) VALUES
-  (3, 'intro', 'multi', 'Which of these have $malepartner and $femalepartner done in the past but rarely do now?', NULL, 'Tick all that apply.', 'Long make-out sessions
-Sex in different rooms or places
-Oral sex
-Trying new positions
-Sexy texting
-Dressing up or lingerie
-Spontaneous quickies
-Weekends away', 0, 1, 10),
-  (3, 'intro', 'textarea', 'Is there anything you miss from earlier in the relationship?', NULL, NULL, NULL, 0, 1, 20);
-INSERT INTO categories (id, section, name, description, sort_order) VALUES (4, 'intro', 'Wishes', 'What you would like more of.', 40);
+  (3, 'intro', 'multi', 'Which of these have you and $partner tried at some point?', NULL, 'Tick all that apply.', 'Oral
+Vaginal
+Anal
+69
+Threesomes
+Group sex
+Make porn for ourselves
+Make porn for others
+Swinging
+Being watched / exhibitionism
+Roleplay
+Toys during sex
+BDSM / light bondage
+Pegging
+Same-sex play (with others)
+Cuckolding / hotwife style', 0, 1, 10);
+INSERT INTO categories (id, section, name, description, sort_order) VALUES (4, 'intro', 'Individual history, permission and honesty', 'Private. $partner never sees these answers.', 40);
 INSERT INTO questions (category_id, section, qtype, text, text_female, help, options, required, active, sort_order) VALUES
-  (4, 'intro', 'textarea', 'Something I wish $partner and I did more often:', NULL, NULL, NULL, 0, 1, 10),
-  (4, 'intro', 'textarea', 'Something I have wanted to try but never said out loud:', NULL, NULL, NULL, 0, 1, 20);
-INSERT INTO categories (id, section, name, description, sort_order) VALUES (5, 'intro', 'My history', 'Background about you. Private to you.', 50);
-INSERT INTO questions (category_id, section, qtype, text, text_female, help, options, required, active, sort_order) VALUES
-  (5, 'intro', 'single', 'Roughly how many sexual partners did you have before $partner?', NULL, NULL, 'None
-1 to 2
-3 to 5
-6 to 10
-11 to 20
-More than 20
-Prefer not to say', 1, 1, 10),
-  (5, 'intro', 'single', 'Have you explored kink or BDSM before this relationship?', NULL, NULL, 'No
-A little
-Quite a bit
-Yes, a lot', 1, 1, 20),
-  (5, 'intro', 'textarea', 'Anything from your past you would like to note?', NULL, NULL, NULL, 0, 1, 30);
-INSERT INTO categories (id, section, name, description, sort_order) VALUES (6, 'intro', 'Honesty and permission', 'Ground rules before the main quiz.', 60);
-INSERT INTO questions (category_id, section, qtype, text, text_female, help, options, required, active, sort_order) VALUES
-  (6, 'intro', 'single', 'I promise to answer honestly, even if it feels awkward.', NULL, NULL, 'Yes, I promise
-I will do my best', 1, 1, 10),
-  (6, 'intro', 'single', 'When we see our matches, how would you like to talk about them?', NULL, NULL, 'Bring it up anytime
-Let me bring it up first
-Let us agree on a time to talk', 1, 1, 20),
-  (6, 'intro', 'single', 'If we both say yes to something, I would rather...', NULL, NULL, 'Talk it through first
-Let it happen when the moment feels right
-Plan it together', 1, 1, 30),
-  (6, 'intro', 'textarea', 'Any hard limits you want to state up front?', NULL, NULL, NULL, 0, 1, 40);
+  (4, 'intro', 'number', 'How many consensual male sexual partners have you had?', NULL, 'Lifetime count of male partners', NULL, 1, 1, 10),
+  (4, 'intro', 'number', 'How many consensual female sexual partners have you had?', NULL, 'Lifetime count of female partners', NULL, 1, 1, 20),
+  (4, 'intro', 'single', 'Have you had oral sex with past partners/hookups?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 30),
+  (4, 'intro', 'single', 'Have you had vaginal sex with past partners/hookups?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 40),
+  (4, 'intro', 'single', 'Have you done anal with past partners/hookups?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 50),
+  (4, 'intro', 'single', 'Have you ever cheated (sexual contact) on a past partner?', NULL, 'Any past relationship', 'Yes
+No
+Prefer not to say', 1, 1, 60),
+  (4, 'intro', 'single', 'Have you ever cheated (sexual contact) on your current partner?', NULL, 'With the person taking this quiz with you', 'Yes
+No
+Prefer not to say', 1, 1, 70),
+  (4, 'intro', 'single', 'Has your current partner ever allowed you to have sex with someone else and you didn''t?', NULL, 'Permission was given but you chose not to', 'Yes
+No
+Prefer not to say', 1, 1, 80),
+  (4, 'intro', 'single', 'Has your current partner ever allowed you to have sex with someone else and you did?', NULL, 'Permission was given and you acted on it', 'Yes
+No
+Prefer not to say', 1, 1, 90),
+  (4, 'intro', 'single', 'Has your partner ever allowed you to have sex with someone else, you said you didn''t, but you actually did?', NULL, 'You lied about following through', 'Yes
+No
+Prefer not to say', 1, 1, 100),
+  (4, 'intro', 'single', 'Has your current partner ever allowed you to receive oral from someone else and you didn''t?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 110),
+  (4, 'intro', 'single', 'Has your current partner ever allowed you to receive oral from someone else and you did?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 120),
+  (4, 'intro', 'single', 'Has your partner allowed you to do something sexual with others, you said no, but you did it anyway?', NULL, 'Any sexual contact beyond kissing', 'Yes
+No
+Prefer not to say', 1, 1, 130),
+  (4, 'intro', 'single', 'Have you ever given your partner permission to have sex with someone else and they didn''t?', NULL, 'You offered, they declined', 'Yes
+No
+Prefer not to say', 1, 1, 140),
+  (4, 'intro', 'single', 'Have you ever given your partner permission to have sex with someone else and they did?', NULL, 'You offered and they accepted', 'Yes
+No
+Prefer not to say', 1, 1, 150),
+  (4, 'intro', 'single', 'Have you ever told your partner you were okay with them sleeping with someone else, but you weren''t actually okay with it?', NULL, 'You gave permission you didn''t fully mean', 'Yes
+No
+Prefer not to say', 1, 1, 160),
+  (4, 'intro', 'single', 'Have you ever been offered permission by your partner to play with others but you were too nervous/scared to take it?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 170),
+  (4, 'intro', 'single', 'Have you ever taken permission from your partner to play with others and then felt guilty afterward?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 180),
+  (4, 'intro', 'single', 'Have you ever been in a situation where your partner said ''you can if you want'' regarding someone else, and you did?', NULL, 'Casual or non-explicit permission', 'Yes
+No
+Prefer not to say', 1, 1, 190),
+  (4, 'intro', 'single', 'Have you ever been in a situation where your partner said ''you can if you want'' regarding someone else, and you didn''t?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 200),
+  (4, 'intro', 'single', 'Have you ever lied to your current partner about sexual contact with someone else (even if it was ''allowed'')?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 210),
+  (4, 'intro', 'single', 'Would you want your current partner to give you explicit permission to have sex with someone else?', NULL, 'Future desire', 'Yes
+No
+Maybe
+Prefer not to say', 1, 1, 220),
+  (4, 'intro', 'single', 'Would you be willing to give your current partner explicit permission to have sex with someone else?', NULL, 'Future willingness', 'Yes
+No
+Maybe
+Prefer not to say', 1, 1, 230),
+  (4, 'intro', 'single', 'Have you ever fantasized about your partner giving you permission to sleep with someone specific?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 240),
+  (4, 'intro', 'single', 'Have you ever been jealous after giving your partner permission to play with someone else?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 250),
+  (4, 'intro', 'single', 'Has your partner ever given you permission to do something sexual with others that you later regretted doing?', NULL, NULL, 'Yes
+No
+Prefer not to say', 1, 1, 260);
+
+-- Main questionnaire (from the Quiz Questions tab)
 INSERT INTO categories (id, section, name, description, sort_order) VALUES (7, 'main', 'Vanilla / Basics', NULL, 10);
 INSERT INTO questions (category_id, section, qtype, text, text_female, help, options, required, active, sort_order) VALUES
   (7, 'main', 'scale', 'Have longer, slower foreplay sessions with $femalepartner', 'Have longer, slower foreplay sessions with $malepartner', NULL, NULL, 1, 1, 1),
