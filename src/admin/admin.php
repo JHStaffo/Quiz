@@ -229,7 +229,7 @@ case 'session':
                     }
                     return $out;
                 };
-                $h .= '<tr><td>' . e(fill_names($qq['text'], $names)) . '</td><td>' . $cell($aAns[$qid] ?? null) . '</td><td>' . $cell($bAns[$qid] ?? null) . '</td></tr>';
+                $h .= '<tr><td>' . e(question_text($qq, $names)) . '</td><td>' . $cell($aAns[$qid] ?? null) . '</td><td>' . $cell($bAns[$qid] ?? null) . '</td></tr>';
             }
         }
         $h .= '</table></div></div>';
@@ -249,7 +249,7 @@ case 'session':
             $h .= '<h3>' . e($g['cat']['name']) . '</h3><ul class="plain">';
             foreach ($g['items'] as $it) {
                 $h .= '<li>' . ($it['level'] ? '<span class="lvl l' . $it['level'] . '">' . e($it['label']) . '</span> ' : '')
-                    . e(fill_names($it['q']['text'], $names))
+                    . e(question_text($it['q'], $names))
                     . ($it['shared'] ? ': ' . e(implode(', ', $it['shared'])) : '')
                     . ($it['mutual_heart'] ? ' <span class="heart-on">♥♥</span>' : '') . '</li>';
             }
@@ -277,6 +277,7 @@ case 'questions':
                 . ' <a class="btn small ghost" href="' . e(url('admin/question/new?cat=' . $c['id'])) . '">+ Question</a></div><ol class="adm-qs">';
             foreach ($qs as $qq) {
                 $h .= '<li class="' . ($qq['active'] ? '' : 'inactive') . '"><a href="' . e(url('admin/question/' . $qq['id'])) . '">' . e($qq['text']) . '</a>'
+                    . (trim((string)$qq['text_female']) !== '' ? '<div class="muted small">Her view: ' . e($qq['text_female']) . '</div>' : '')
                     . ' <span class="tag">' . e($qq['qtype']) . '</span>' . ($qq['required'] ? '' : ' <span class="tag">optional</span>')
                     . ($qq['active'] ? '' : ' <span class="tag off">hidden</span>') . ' <span class="muted">#' . (int)$qq['sort_order'] . '</span></li>';
             }
@@ -335,7 +336,7 @@ case 'category':
 
 case 'question':
     $isNew = $arg === 'new';
-    $qq = $isNew ? ['id' => 0, 'category_id' => (int)($_GET['cat'] ?? 0), 'qtype' => 'scale', 'text' => '', 'help' => '', 'options' => '', 'required' => 1, 'active' => 1, 'sort_order' => 100]
+    $qq = $isNew ? ['id' => 0, 'category_id' => (int)($_GET['cat'] ?? 0), 'qtype' => 'scale', 'text' => '', 'text_female' => '', 'help' => '', 'options' => '', 'required' => 1, 'active' => 1, 'sort_order' => 100]
         : q('SELECT * FROM questions WHERE id = ?', [(int)$arg])->fetch();
     if (!$qq) {
         not_found();
@@ -365,13 +366,14 @@ case 'question':
             flash('Add at least one option (one per line) for this question type.');
             redirect('admin/question/' . $arg);
         }
-        $vals = [(int)$cat['id'], $cat['section'], $type, mb_substr($text, 0, 1000), trim((string)($_POST['help'] ?? '')) ?: null,
+        $textF = trim((string)($_POST['text_female'] ?? ''));
+        $vals = [(int)$cat['id'], $cat['section'], $type, mb_substr($text, 0, 1000), $textF !== '' ? mb_substr($textF, 0, 1000) : null, trim((string)($_POST['help'] ?? '')) ?: null,
                  $opts ?: null, empty($_POST['required']) ? 0 : 1, empty($_POST['active']) ? 0 : 1, (int)($_POST['sort_order'] ?? 0)];
         if ($isNew) {
-            q('INSERT INTO questions (category_id, section, qtype, text, help, options, required, active, sort_order) VALUES (?,?,?,?,?,?,?,?,?)', $vals);
+            q('INSERT INTO questions (category_id, section, qtype, text, text_female, help, options, required, active, sort_order) VALUES (?,?,?,?,?,?,?,?,?,?)', $vals);
         } else {
             $vals[] = $qq['id'];
-            q('UPDATE questions SET category_id=?, section=?, qtype=?, text=?, help=?, options=?, required=?, active=?, sort_order=? WHERE id=?', $vals);
+            q('UPDATE questions SET category_id=?, section=?, qtype=?, text=?, text_female=?, help=?, options=?, required=?, active=?, sort_order=? WHERE id=?', $vals);
         }
         flash('Question saved.');
         redirect('admin/questions');
@@ -389,8 +391,10 @@ case 'question':
     $h = '<form method="post" class="card">' . csrf_field() . '<h1>' . ($isNew ? 'New question' : 'Edit question') . '</h1>'
         . '<label class="fld">Category<select name="category_id" required><option value="">Choose...</option>' . $catOpts . '</select></label>'
         . '<label class="fld">Answer type<select name="qtype">' . $typeOpts . '</select></label>'
-        . '<label class="fld">Question text<textarea name="text" rows="2" required maxlength="1000">' . e($qq['text']) . '</textarea>'
+        . '<label class="fld">Question text (his view, and the default)<textarea name="text" rows="2" required maxlength="1000">' . e($qq['text']) . '</textarea>'
         . '<small class="muted">Use $malepartner, $femalepartner, $me, $partner. For main questions, write it as an activity (e.g. "$malepartner giving $femalepartner a massage") so results read as "Try ...", "Regularly ...".</small></label>'
+        . '<label class="fld">Her-view wording (optional)<textarea name="text_female" rows="2" maxlength="1000">' . e($qq['text_female']) . '</textarea>'
+        . '<small class="muted">Shown to the woman instead of the text above, e.g. "Give $malepartner a massage" when the text above is "Receive a massage from $femalepartner". Leave empty to show everyone the same wording.</small></label>'
         . '<label class="fld">Help text (optional)<input type="text" name="help" maxlength="1000" value="' . e($qq['help']) . '"></label>'
         . '<label class="fld">Options, one per line (only for "pick one" and "pick any")<textarea name="options" rows="5">' . e($qq['options']) . '</textarea></label>'
         . '<label class="fld">Sort order within category<input type="number" name="sort_order" value="' . (int)$qq['sort_order'] . '"></label>'

@@ -182,25 +182,39 @@ function find_by_token(string $token): ?array
  */
 function names_for(?array $viewer, ?array $partner = null): array
 {
-    $male = 'him';
-    $female = 'her';
-    if ($viewer) {
-        $self = trim((string)$viewer['self_name']);
-        $other = trim((string)$viewer['partner_name']);
-        if ($viewer['gender'] === 'male') {
-            $male = $self !== '' ? $self : 'Him';
-            $female = $other !== '' ? $other : 'Her';
-        } else {
-            $female = $self !== '' ? $self : 'Her';
-            $male = $other !== '' ? $other : 'Him';
-        }
+    $gender = $viewer['gender'] ?? '';
+    $self = trim((string)($viewer['self_name'] ?? ''));
+    $other = trim((string)($viewer['partner_name'] ?? ''));
+    if ($gender === 'male') {
+        $male = $self !== '' ? $self : 'Him';
+        $female = $other !== '' ? $other : 'Her';
+    } elseif ($gender === 'female') {
+        $female = $self !== '' ? $self : 'Her';
+        $male = $other !== '' ? $other : 'Him';
+    } else {
+        $male = 'him';
+        $female = 'her';
     }
     return [
-        'male' => $male,
-        'female' => $female,
-        'me' => $viewer['gender'] ?? '' ? ($viewer['gender'] === 'male' ? $male : $female) : 'me',
-        'partner' => $viewer['gender'] ?? '' ? ($viewer['gender'] === 'male' ? $female : $male) : 'my partner',
+        'gender'  => $gender,
+        'male'    => $male,
+        'female'  => $female,
+        'me'      => $gender === 'male' ? $male : ($gender === 'female' ? $female : 'me'),
+        'partner' => $gender === 'male' ? $female : ($gender === 'female' ? $male : 'my partner'),
     ];
+}
+
+/**
+ * The question wording for this reader: the female-view wording when the
+ * reader is the woman and one is set, otherwise the main (male-view) wording.
+ */
+function question_text(array $qq, array $names): string
+{
+    $text = $qq['text'];
+    if (($names['gender'] ?? '') === 'female' && trim((string)($qq['text_female'] ?? '')) !== '') {
+        $text = $qq['text_female'];
+    }
+    return fill_names($text, $names);
 }
 
 function fill_names(string $text, array $names): string
@@ -413,7 +427,7 @@ function render_question(array $qq, ?array $ans, array $names, bool $debug = fal
     $qid = (int)$qq['id'];
     $type = $qq['qtype'];
     $base = 'a[' . $qid . ']';
-    $text = fill_names($qq['text'], $names);
+    $text = question_text($qq, $names);
     $help = $qq['help'] ? '<div class="help">' . e(fill_names($qq['help'], $names)) . '</div>' : '';
     $filled = answer_is_filled($qq, $ans);
     $h = '<div class="q q-' . e($type) . ($filled ? ' answered' : '') . '" data-qid="' . $qid . '" data-type="' . e($type) . '"'

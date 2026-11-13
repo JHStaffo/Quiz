@@ -147,3 +147,4 @@ code{background:var(--accent-soft);border-radius:4px;padding:0 4px}
   .dbg-text{flex:none;width:100%}
   h1{font-size:22px}
 }
+.muted.small,.small{font-size:13px}
