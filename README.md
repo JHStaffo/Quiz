@@ -14,6 +14,8 @@ A private, self-hosted questionnaire for couples. Each partner answers on their 
 
 Open `/admin` to log in.
 
+**Already installed the first version?** Don't re-import `install.sql` (it wipes everything). Back up the database, then import `upgrade-workbook-questions.sql`. It adds the her-view wording column and replaces the main questions with the workbook set. This deletes existing main-quiz answers but keeps the intro questions and answers.
+
 ## Pages
 
 | URL | What it does |
@@ -42,7 +44,9 @@ An item appears in results only when both partners answered 2 or higher, labelle
 
 ## Questions
 
-Everything is editable in `/admin > Questions`: categories (intro or main), order, question text, type, options, required, and active/hidden. Placeholders in question text and options:
+The main quiz ships with the 368 questions from the couples quiz workbook, in 13 categories, ordered by the workbook's ID numbers. Everything is editable in `/admin > Questions`: categories (intro or main), order, question text, her-view wording, type, options, required, and active/hidden.
+
+Each question has a main wording (his view) and an optional **her-view wording**. The woman sees the her-view wording when one is set, so a single question can read "Receive a massage from $femalepartner" for him and "Give $malepartner a massage" for her. Both partners' answers are matched on the same question, and each person's results page uses their own wording. Placeholders in question text and options:
 
 * `$malepartner` and `$femalepartner`: the names each person entered (from the reader's point of view, so each sees the names they typed)
 * `$me` and `$partner`: the reader and their partner

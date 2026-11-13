@@ -45,7 +45,7 @@ if (!$count) {
 foreach ($groups as $g) {
     $body .= '<section class="cat results"><h2>' . e(fill_names($g['cat']['name'], $names)) . '</h2>';
     foreach ($g['items'] as $it) {
-        $text = fill_names($it['q']['text'], $names);
+        $text = question_text($it['q'], $names);
         $body .= '<div class="match' . ($it['mutual_heart'] ? ' hearted' : '') . '">';
         if ($it['level'] !== null) {
             $body .= '<span class="lvl l' . $it['level'] . '">' . e($verb[$it['level']]) . '</span>';
