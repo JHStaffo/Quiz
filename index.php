@@ -24,6 +24,17 @@ if (count($parts) === 3 && in_array($parts[0], ['join', 'quiz'], true)
     array_pop($parts);
 }
 
+// The suffix is often typed after a page number, e.g. /quiz/{token}?p=2/Dbg1357.
+// Move it into the path so the page opens in debug view.
+$qs = (string)($_SERVER['QUERY_STRING'] ?? '');
+$sfx = '/' . cfg('debug_suffix', 'Dbg1357');
+if (!$DEBUG && $method === 'GET' && count($parts) === 2 && in_array($parts[0], ['join', 'quiz'], true)
+    && cfg('debug_suffix_enabled', true) && $qs !== ''
+    && substr(rawurldecode($qs), -strlen($sfx)) === $sfx) {
+    $page = (int)($_GET['p'] ?? 0);
+    redirect($parts[0] . '/' . $parts[1] . $sfx . ($page > 0 ? '?p=' . $page : ''));
+}
+
 $route = $parts[0] ?? '';
 
 switch ($route) {
